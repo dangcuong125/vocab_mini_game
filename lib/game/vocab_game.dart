@@ -97,7 +97,6 @@ class VocabGame extends FlameGame {
           gameState.onCorrectMatch(word.vocabItem.meaning);
           word.removeFromParent();
         } else {
-          gameState.loseLife();
           word.showWrongEffect();
         }
       },
