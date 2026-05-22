@@ -2,19 +2,43 @@ import 'dart:math';
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 import 'bullet_component.dart';
-import '../game_constants.dart';
 import '../vocab_game.dart';
 
 class GunComponent extends PositionComponent with HasGameReference<VocabGame> {
-  final _bodyPaint = Paint()..color = GameConstants.gunBodyColor;
-  final _barrelPaint = Paint()..color = GameConstants.gunBarrelColor;
+  final Sprite _gunSprite;
+  final Sprite _circleSprite;
 
-  GunComponent({required Vector2 position})
-    : super(
-        position: position,
-        size: Vector2(GameConstants.gunWidth, GameConstants.gunHeight),
-        anchor: Anchor.bottomCenter,
-      );
+  GunComponent({
+    required Vector2 position,
+    required Sprite gunSprite,
+    required Sprite circleSprite,
+  })  : _gunSprite = gunSprite,
+        _circleSprite = circleSprite,
+        super(
+          position: position,
+          size: Vector2(80, 80),
+          anchor: Anchor.bottomCenter,
+        );
+
+  @override
+  Future<void> onLoad() async {
+    // Glowing circle under the gun base
+    add(SpriteComponent(
+      sprite: _circleSprite,
+      size: Vector2(130, 44),
+      anchor: Anchor.center,
+      position: Vector2(size.x / 2, size.y * 0.88),
+      priority: 0,
+    ));
+    // Gun turret on top
+    add(SpriteComponent(
+      sprite: _gunSprite,
+      size: size,
+      anchor: Anchor.center,
+      position: size / 2,
+      priority: 1,
+    ));
+  }
 
   void aimAt(Vector2 worldTarget) {
     final delta = worldTarget - absoluteCenter;
@@ -23,27 +47,12 @@ class GunComponent extends PositionComponent with HasGameReference<VocabGame> {
 
   void shoot({required Vector2 worldTarget, required VoidCallback onHit}) {
     final dir = (worldTarget - absoluteCenter).normalized();
-    final start = absoluteCenter + dir * GameConstants.gunBulletStartOffset;
-    game.add(BulletComponent(start: start, target: worldTarget, onHit: onHit));
-  }
-
-  @override
-  void render(Canvas canvas) {
-    final cx = size.x / 2;
-    final cy = size.y / 2;
-
-    canvas.drawCircle(Offset(cx, cy), GameConstants.gunBodyRadius, _bodyPaint);
-
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromCenter(
-          center: Offset(cx, cy - GameConstants.gunBarrelOffsetY),
-          width: GameConstants.gunBarrelWidth,
-          height: GameConstants.gunBarrelHeight,
-        ),
-        const Radius.circular(GameConstants.gunBarrelRadius),
-      ),
-      _barrelPaint,
-    );
+    final start = absoluteCenter + dir * 40;
+    game.add(BulletComponent(
+      start: start,
+      target: worldTarget,
+      onHit: onHit,
+      animation: game.bulletAnimation,
+    ));
   }
 }

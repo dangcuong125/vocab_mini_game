@@ -14,12 +14,17 @@ class FallingWord extends PositionComponent
   final void Function(FallingWord) onTapped;
 
   static const double _speed = GameConstants.wordSpeed;
-  static const Color _normalColor = GameConstants.wordNormalColor;
-  static const Color _wrongColor = GameConstants.wordWrongColor;
-  static const Color _textColor = GameConstants.wordTextColor;
 
-  final Paint _bgPaint = Paint()..color = _normalColor;
-  bool _flashing = false;
+  late TextComponent _label;
+
+  static final _normalPaint = TextPaint(
+    style: const TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      shadows: [Shadow(color: Color(0xAAFFFFFF), blurRadius: 8)],
+    ),
+  );
 
   FallingWord({
     required this.vocabItem,
@@ -28,39 +33,20 @@ class FallingWord extends PositionComponent
     required this.onTapped,
     required Vector2 initialPosition,
   }) : super(
-         position: initialPosition,
-         size: Vector2(GameConstants.wordWidth, GameConstants.wordHeight),
-         anchor: Anchor.topCenter,
-       );
+          position: initialPosition,
+          size: Vector2(GameConstants.wordWidth, GameConstants.wordHeight),
+          anchor: Anchor.topCenter,
+        );
 
   @override
   Future<void> onLoad() async {
-    add(
-      TextComponent(
-        text: vocabItem.word,
-        textRenderer: TextPaint(
-          style: const TextStyle(
-            color: _textColor,
-            fontSize: GameConstants.wordFontSize,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        anchor: Anchor.center,
-        position: size / 2,
-      ),
+    _label = TextComponent(
+      text: vocabItem.word,
+      textRenderer: _normalPaint,
+      anchor: Anchor.center,
+      position: size / 2,
     );
-  }
-
-  @override
-  void render(Canvas canvas) {
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        size.toRect(),
-        const Radius.circular(GameConstants.wordBorderRadius),
-      ),
-      _bgPaint,
-    );
-    super.render(canvas);
+    add(_label);
   }
 
   @override
@@ -83,18 +69,4 @@ class FallingWord extends PositionComponent
     onTapped(this);
   }
 
-  void showWrongEffect() {
-    if (_flashing || isRemoved) return;
-    _flashing = true;
-    _bgPaint.color = _wrongColor;
-    Future.delayed(
-      const Duration(milliseconds: GameConstants.wordWrongFlashMs),
-      () {
-        if (!isRemoved) {
-          _bgPaint.color = _normalColor;
-          _flashing = false;
-        }
-      },
-    );
-  }
 }

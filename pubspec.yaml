@@ -10,6 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   flame: ^1.20.0
+  audioplayers: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -18,3 +19,17 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/PlayScreen/
+    - assets/PlayScreen/CorrectAnswer/
+    - assets/PlayScreen/FailAnswer/
+    - "assets/PlayScreen/Star Bullet/"
+    - assets/PlayScreen/ClickRipple/
+    - assets/PlayScreen/SlowBorder/
+    - assets/PlayScreen/SnailMoving/
+    - assets/PlayScreen/SnowFlower/
+    - assets/PlayScreen/Freeze/
+    - assets/PlayScreen/MultipleScore/
+    - assets/MainScreen/
+    - assets/Others/
+    - assets/Sounds/

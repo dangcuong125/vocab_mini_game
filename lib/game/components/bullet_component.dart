@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flame/components.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../game_constants.dart';
 
 class BulletComponent extends PositionComponent {
@@ -10,24 +10,33 @@ class BulletComponent extends PositionComponent {
   final Vector2 _velocity;
   final double _maxDistance;
   double _traveled = 0;
+  final SpriteAnimation _animation;
 
   BulletComponent({
     required Vector2 start,
     required Vector2 target,
     required this.onHit,
+    required SpriteAnimation animation,
   })  : _velocity = (target - start).normalized() * _speed,
         _maxDistance = start.distanceTo(target),
-        super(position: start.clone(), size: Vector2(GameConstants.bulletWidth, GameConstants.bulletHeight), anchor: Anchor.center) {
+        _animation = animation,
+        super(
+          position: start.clone(),
+          size: Vector2(54, 240),
+          anchor: Anchor.topCenter,
+        ) {
     final dir = target - start;
     angle = atan2(dir.x, -dir.y);
   }
 
   @override
-  void render(Canvas canvas) {
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(size.toRect(), const Radius.circular(GameConstants.bulletRadius)),
-      Paint()..color = GameConstants.bulletColor,
-    );
+  Future<void> onLoad() async {
+    add(SpriteAnimationComponent(
+      animation: _animation.clone(),
+      size: size,
+      anchor: Anchor.center,
+      position: size / 2,
+    ));
   }
 
   @override
@@ -36,7 +45,8 @@ class BulletComponent extends PositionComponent {
     final step = _velocity * dt;
     position += step;
     _traveled += step.length;
-    if (_traveled >= _maxDistance || position.y < GameConstants.bulletOffscreenThreshold) {
+    if (_traveled >= _maxDistance ||
+        position.y < GameConstants.bulletOffscreenThreshold) {
       onHit();
       removeFromParent();
     }
