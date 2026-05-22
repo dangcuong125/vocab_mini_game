@@ -22,7 +22,7 @@ class BulletComponent extends PositionComponent {
         _animation = animation,
         super(
           position: start.clone(),
-          size: Vector2(54, 240),
+          size: Vector2(108, 480),
           anchor: Anchor.topCenter,
         ) {
     final dir = target - start;

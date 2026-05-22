@@ -217,12 +217,12 @@ class _GameScreenState extends State<GameScreen> {
                 Image.asset('assets/PlayScreen/gun.png', width: 80, height: 80),
                 if (_gameState.muzzleFlash)
                   Positioned(
-                    top: 2,
-                    left: 8,
-                    right: 8,
+                    top: -30,
+                    left: -20,
+                    right: -20,
                     child: Image.asset(
                       'assets/PlayScreen/shooting_circle.png',
-                      height: 26,
+                      height: 80,
                       fit: BoxFit.fill,
                     ),
                   ),
